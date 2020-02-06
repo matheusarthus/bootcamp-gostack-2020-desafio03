@@ -1,0 +1,315 @@
+--Iniciar o Yarn na pasta do projeto
+
+yarn init -y
+
+--Instalar o ExpressJS
+
+yarn add express
+
+--Instalar o Nodemon
+
+yarn add nodemon -D
+
+--Instalar Sucrase
+
+yarn add sucrase nodemon -D
+
+--Alterar o package.json
+
+"scripts": {
+    "dev": "nodemon src/server.js",
+    "dev:debug": "nodemon --inspect src/server"
+  },
+
+--Criar o nodemon.json
+
+{
+  "execMap": {
+    "js":"node -r sucrase/register"
+  }
+}
+
+--Alterar o launch.json
+
+      "request": "attach",
+      "protocol": "inspector",
+
+--Criar pasta src
+  -> criar app.js, server.js, routes.js
+
+--Configurar servidor no app.js
+  -> criar class App
+
+--Configurar arquivo server.js
+
+--Configurar arquivo routes.js
+  -> Exportando a class routes
+
+--Instalar Eslint
+
+yarn add eslint -D
+
+--Inicializar Eslint
+
+yarn eslint --init
+
+--Excluir o arquivo package-lock.json
+  -> dar comando yarn para atualiar o package.json
+
+--Instalar Prettier
+
+yarn add prettier eslint-config-prettier eslint-plugin-prettier -D
+
+--Configurar arquivo .eslintrc.js
+
+extends: [
+    "airbnb-base",
+    "prettier"
+  ],
+plugins: ["prettier"],
+
+rules: {
+    "prettier/prettier": "error",
+    "linebreak-style": 0,
+    "class-methods-use-this": "off",
+    "no-param-reassign": "off",
+    "camelcase": "off",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "next" }]
+  },
+
+--Criar e configurar o arquivo .prettierrc
+
+{
+  "singleQuote": true,
+  "trailingComma": "es5"
+}
+
+--Clicar com o lado direito do mouse e
+--Criar e configurar .editorconfig
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+--Criar a pasta config
+
+--Criar a pasta database e dentro a pasta migrations
+
+--Criar pastas da arquitetua MVC (Model, Views e Controllers)
+  -> Pasta App
+    -> Pasta Controllers e Models
+
+--Instalar o Sequelize
+
+yarn add sequelize
+
+yarn add sequelize-cli -D
+
+--Criar e configrar arquivo .sequelizerc, mapeando os caminhos até
+--os nossos arquivos de configuração
+
+const { resolve } = require('path');
+
+module.exports = {
+  config: resolve(__dirname, 'src', 'config', 'database.js'),
+  'models-path': resolve(__dirname, 'src', 'app', 'models'),
+  'migrations-path': resolve(__dirname, 'src', 'database', 'migrations'),
+  'seeders-path': resolve(__dirname, 'src', 'database', 'seeds'),
+};
+
+--Instalar as dependências do Sequelize para Postgres
+
+yarn add pg pg-hstore
+
+--Criar o arquivo database.js e configurar para permitir comunicação
+--do Sequelize com o banco de dados
+
+module.exports = {
+  dialect: 'postgres',
+  host: 'localhost',
+  username: 'postgres',
+  password: 'docker',
+  database: 'gobarber',
+  define: {
+    timestamps: true,
+    underscored: true,
+    underscoredAll: true,
+  },
+};
+
+--Rodar o comando e criar o primeiro arquivo de migration
+
+yarn sequelize migration:create --name=create=users
+
+--Configurar o arquivo de migration
+
+--Rodar comando para executar a migration
+
+yarn sequelize db:migrate
+
+--Criar arquivo User.js dentro da pasta models
+
+import Sequelize, { Model } from 'sequelize';
+
+class User extends Model {
+  static init(sequelize) {
+    super.init(
+      {
+        name: Sequelize.STRING,
+        email: Sequelize.STRING,
+        password_hash: Sequelize.STRING,
+      },
+      {
+        sequelize,
+      }
+    );
+  }
+}
+
+export default User;
+
+--Criar a conexão com o banco de dados - loader de models
+  ->Criar um arquivo index.js dentro da pasta database
+  --Esse arquivo carregará todos os Models dentro da aplicação
+    ->Chamar o arquivo index.js no arquivo app.js
+
+import Sequelize from 'sequelize';
+
+import User from '../app/models/User';
+
+import databaseConfig from '../config/database';
+
+const models = [User];
+
+class Database {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    this.connection = new Sequelize(databaseConfig);
+
+    models.map(model => model.init(this.connection));
+  }
+}
+
+export default new Database();
+
+--Utilizar a funcionalidade seeds para cadastrar
+--automaticamente um usuário administrador
+
+--Gerar um arquivo de seeds
+
+yarn sequelize seed:generate --name admin-user
+
+--Instalar a extensão bcrypt para gerar o hash do password
+
+yarn add bcryptjs
+
+--Configurar o arquivo de seeds
+
+const bcrypt = require("bcryptjs");
+
+module.exports = {
+  up: QueryInterface => {
+    return QueryInterface.bulkInsert(
+      "users",
+      [
+        {
+          name: "Distruidora FastFeet",
+          email: "admin@fastfeet.com",
+          password_hash: bcrypt.hashSync("123456", 8),
+          created_at: new Date(),
+          updated_at: new Date()
+        }
+      ],
+      {}
+    );
+  },
+
+  down: () => {}
+};
+
+--Gerar o seed
+
+yarn sequelize db:seed:all
+
+--Criar estrutura de autenticação com método JWT
+
+--Criar arquivo SessionController.js na pasta controllers
+
+--Instalar extensão JasonWebtToken
+
+yarn add jsonwebtoken
+
+--Criar método de comparar senha com hash dentro do arquivo User.js
+
+checkPassword(password) {
+    return bcrypt.compare(password, this.password_hash);
+  }
+
+--Criar um arquivo auth.js dentro da pasta config
+  -> Na pasta colocar a chave do token gerado pelo site md5online.com
+  -> Colocar também o tempo de expiração do token
+
+export default {
+  secret: '42fb6affe49d265dfe5ed06b8d96b320',
+  expiresIn: '7d',
+};
+
+--Implementar código do SessionController.js
+
+ token: jwt.sign({ id }, authConfig.secret, {
+        expiresIn: authConfig.expiresIn,
+      })
+
+--Colocar uma nova rota para chamar o SessionController
+
+--Criar tabela 'recipient' no banco para o cadastro dos destinatários
+  ->Criar nova migration para a configuração da tabela
+    ->Rodar comando 'yarn sequelize db:migrate' para criar a tabela
+
+--Criar model 'Recipient.js' para a tabela recipient
+
+--Colocoar no loader de Models, arquivo index.js dentro
+--da pasta database, o novo modelo Recipient
+
+--Criar novo controller, RecipientController.js
+  ->Criar e configurar novo controller
+    ->Tanto o método store, de criação, quanto o update, de alteração
+
+--Criar Middleware de autenticação (validação do login)
+  ->Criar pasta middlewares em app e dentro o arquivo auth.js
+    ->Configurar middleware de autenticação
+      ->Inserir middleware no arquivo routes
+
+--Criar método update dentro do RecipientController.js para a
+--atualização dos cadastros dos destinatários
+  ->Criar nova rota chamando o método update
+
+--Criar validação para os dados de entrada na autenticação
+
+--Instalar a extensão Yup
+
+yarn add yup
+
+--Modificar SessionController.js para validar a entrada de dados
+--no momento do login do Adm
+  ->A extensão Yup validará a entrada do e-mail e da senha
+    ->Schema validation
+
+const schema = Yup.object().shape({
+      email: Yup.string()
+        .email()
+        .required(),
+      password: Yup.string().required(),
+    });
+
+--Modificar o RecipientController.js para validar a entrada de dados
+--no momento da criação e atualização do cadastro do recipient
+  ->A extensão validará
