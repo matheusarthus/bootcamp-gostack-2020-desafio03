@@ -313,3 +313,53 @@ const schema = Yup.object().shape({
 --Modificar o RecipientController.js para validar a entrada de dados
 --no momento da criação e atualização do cadastro do recipient
   ->A extensão validará
+
+-- DEFAFIO 03 ------------------------------------------------------
+
+--Gestão dos Entregadores
+
+--Criar nova tabela no banco 'deliverymen' com:
+
+id (id do entregador)
+name (nome do entregador);
+avatar_id (foto do entregador);
+email (email do entregador)
+created_at;
+updated_at;
+
+--Gerar nova migration de 'files' para guardar os caminhos das imagens.
+--Essa tabela será relacionada à tabela de 'deliverymen', por isso,
+--tem de ser criada antes
+
+yarn sequelize migration:create --name=create-files
+
+--Gerar migration da tabela 'deliverymen'
+
+yarn sequelize migration:create --name=create-deliverymen
+
+--Configurar o Multer para tratar arquivos de imagem
+
+yarn add multer
+
+--Criar pasta 'tmp' e dentro a pasta 'uploads'
+
+--Criar 'multer.js' dentro da pasta 'Config'
+  ->Configurar 'multer.js'
+
+--Criar model "File.js"
+  ->Configurar model
+    ->Inserir model no loader
+
+--Criar controller de files
+  ->ControllerFiles.js
+    ->Configurar controller
+
+--Criar model 'Deliverymen.js'
+  ->Configurar model
+    ->Criar método associate() para associar as tabelas 'Files' e 'Deliverymen'
+      ->Alterar arquivo de loader dos models para mapear método associate()
+        ->Inserir model no loader
+
+--Configurar express.static no 'app.js'
+
+--Criar a nova rota post('/files')
