@@ -371,3 +371,49 @@ yarn add multer
 --Criar nova rota get('/deliverymen')
 --Criar nova rota put('/deliverymen')
 --Criar nova rota delete('/deliverymen')
+
+--Criar nova tabela no banco 'orders' com:
+
+id (id da entrega)
+recipient_id (referência ao destinatário);
+deliveryman_id (referência ao entregador);
+signature_id (referência à uma assinatura do destinatário, que será uma imagem);
+product (nome do produto a ser entregue);
+canceled_at (data de cancelamento, se cancelada);
+start_date (data de retirada do produto);
+end_date (data final da entrega);
+created_at;
+updated_at;
+
+--Gerar migration da tabela 'orders'
+
+yarn sequelize migration:create --name=create-orders
+
+--Criar model 'Order'
+  ->Configurar model;
+    ->Adionar model no loader de models
+
+--Instalar e configurar nodemailer
+
+yarn add nodemailer
+
+--Criar arquivo 'mail.js' dentro da pasta 'config'
+  ->Configurar o arquivo com as info do servidor (MailTrap);
+
+--Criar pasta 'lib' e dentro o arquivo 'Mail.js'
+  ->Configurar o arquivo 'Mail.js'
+
+--Instalar templates de email 'express-handlebars'
+
+yarn add express-handlebars nodemailer-express-handlebars
+
+--Criar nova pasta 'Views' em 'app'
+  ->Dentro de 'Views', criar pasta 'emails'
+    ->Dentro da pasta 'emails' criar pasta 'layouts' e 'partials';
+      ->Criar o arquivo 'default.hbs' em layouts e 'footer.hbs' em partials.
+    ->Criar os arquivos 'solicitation.hbs' e 'cancellation.hbs';
+      ->Configrar os arquivos
+
+--Criar 'OrderController.js'
+  ->Configurar controller com métodos listagem/cadastro/atualização/remoção;
+    ->Adicionar novas rotas com o controller;
