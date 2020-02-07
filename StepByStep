@@ -335,7 +335,7 @@ yarn sequelize migration:create --name=create-files
 
 --Gerar migration da tabela 'deliverymen'
 
-yarn sequelize migration:create --name=create-deliverymen
+yarn sequelize migration:create --name=create-deliverymans
 
 --Configurar o Multer para tratar arquivos de imagem
 
@@ -363,3 +363,11 @@ yarn add multer
 --Configurar express.static no 'app.js'
 
 --Criar a nova rota post('/files')
+
+--Criar novo controller 'DeliverymanController.js'
+  ->Configurar métodos de Store, Create, Update e Delete.
+
+--Criar nova rota post('/deliverymen')
+--Criar nova rota get('/deliverymen')
+--Criar nova rota put('/deliverymen')
+--Criar nova rota delete('/deliverymen')
