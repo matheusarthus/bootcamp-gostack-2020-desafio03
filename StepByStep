@@ -414,6 +414,11 @@ yarn add express-handlebars nodemailer-express-handlebars
     ->Criar os arquivos 'solicitation.hbs' e 'cancellation.hbs';
       ->Configrar os arquivos
 
+--Criar e configurar fila com o Redis
+  ->Criar imagem do Redis no docker
+
+  docker run --name redisbarber
+
 --Criar 'OrderController.js'
   ->Configurar controller com métodos listagem/cadastro/atualização/remoção;
     ->Adicionar novas rotas com o controller;

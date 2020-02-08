@@ -2,6 +2,8 @@ import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
 
+import Mail from '../../lib/Mail';
+
 class OrderController {
   async index(req, res) {
     const orders = await Order.findAll({
@@ -16,7 +18,7 @@ class OrderController {
         {
           model: Deliveryman,
           as: 'deliveryman',
-          attributes: ['name'],
+          attributes: ['name', 'email'],
         },
       ],
     });
@@ -36,7 +38,7 @@ class OrderController {
     }
 
     const deliveryman = await Deliveryman.findOne({
-      where: { name: deliveryman_name },
+      where: { name: deliveryman_name, deleted_at: null },
     });
 
     if (!deliveryman) {
@@ -47,6 +49,19 @@ class OrderController {
       product: product_name,
       recipient_id: recipient.id,
       deliveryman_id: deliveryman.id,
+    });
+
+    await Mail.sendMail({
+      to: `${deliveryman.name} <${deliveryman.email}>`,
+      subject: 'Nova encomenda disponível para retirada',
+      template: 'solicitation',
+      context: {
+        deliveryman: deliveryman.name,
+        product: product_name,
+        recipient: recipient_name,
+        adress: `${recipient.logradouro}, ${recipient.numero} - ${recipient.cidade}-${recipient.estado}. ${recipient.complemento}`,
+        cep: recipient.cep,
+      },
     });
 
     return res.json(order);
