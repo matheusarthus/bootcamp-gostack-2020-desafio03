@@ -2,7 +2,8 @@ import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
 
-import Mail from '../../lib/Mail';
+import SolicitationMail from '../jobs/SolicitationMail';
+import Queue from '../../lib/Queue';
 
 class OrderController {
   async index(req, res) {
@@ -51,17 +52,21 @@ class OrderController {
       deliveryman_id: deliveryman.id,
     });
 
-    await Mail.sendMail({
-      to: `${deliveryman.name} <${deliveryman.email}>`,
-      subject: 'Nova encomenda disponível para retirada',
-      template: 'solicitation',
-      context: {
-        deliveryman: deliveryman.name,
-        product: product_name,
-        recipient: recipient_name,
-        adress: `${recipient.logradouro}, ${recipient.numero} - ${recipient.cidade}-${recipient.estado}. ${recipient.complemento}`,
-        cep: recipient.cep,
-      },
+    const infos = {
+      deliveryman_name: deliveryman.name,
+      deliveryman_email: deliveryman.email,
+      product_name,
+      recipient_name,
+      logradouro: recipient.logradouro,
+      numero: recipient.numero,
+      cidade: recipient.cidade,
+      estado: recipient.estado,
+      complemento: recipient.complemento,
+      cep: recipient.cep,
+    };
+
+    await Queue.add(SolicitationMail.key, {
+      infos,
     });
 
     return res.json(order);

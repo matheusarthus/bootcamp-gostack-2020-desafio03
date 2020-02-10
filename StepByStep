@@ -417,7 +417,27 @@ yarn add express-handlebars nodemailer-express-handlebars
 --Criar e configurar fila com o Redis
   ->Criar imagem do Redis no docker
 
-  docker run --name redisbarber
+  docker run --name redisfastfeet -p 6380:6379 -d -t redis:alpine
+
+--Instalar o bee queue
+
+yarn add bee-queue
+
+--Criar pasta 'jobs' em 'app'
+  ->Criar os jobs 'SolicitationMail.js' e 'CancellationMail.js'
+    ->Configurar os jobs
+
+--Criar arquivo 'redis.js' na pasta 'config'
+  ->Configirar acesso ao Redis
+
+--Criar arquivo 'Queue.js' em 'lib'
+  ->Configirar arquivo Queue.js
+
+--Importar jobs para o controller 'OrderController.js'
+
+--Criar arquivo 'queue.js' em 'src'
+  ->Configurar no 'package.json' novo script
+    ->"queue": "nodemon src/queue.js"
 
 --Criar 'OrderController.js'
   ->Configurar controller com métodos listagem/cadastro/atualização/remoção;
