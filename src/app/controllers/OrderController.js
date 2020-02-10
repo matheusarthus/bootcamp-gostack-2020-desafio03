@@ -121,19 +121,18 @@ class OrderController {
     const deliverymanOrder = await Deliveryman.findByPk(order.deliveryman_id);
     const recipientOrder = await Recipient.findByPk(order.recipient_id);
 
-    const order_id = order.id;
     let product_name = order.product;
     let deliveryman_id = deliverymanOrder.id;
     let deliveryman_name = deliverymanOrder.name;
     let deliveryman_email = deliverymanOrder.email;
     let recipient_id = recipientOrder.id;
     let recipient_name = recipientOrder.name;
-    let logradouro = recipientOrder;
-    let numero = recipientOrder;
-    let cidade = recipientOrder;
-    let estado = recipientOrder;
-    let complemento = recipientOrder;
-    let cep = recipientOrder;
+    let { logradouro } = recipientOrder;
+    let { numero } = recipientOrder;
+    let { cidade } = recipientOrder;
+    let { estado } = recipientOrder;
+    let { complemento } = recipientOrder;
+    let { cep } = recipientOrder;
     let productChanged = false;
     let recipientChanged = false;
     let deliverymanChanged = false;
@@ -185,22 +184,8 @@ class OrderController {
       product: productNameReq,
     });
 
-    console.log(
-      order_id,
-      deliveryman_name,
-      deliveryman_email,
-      product_name,
-      recipient_name,
-      logradouro,
-      numero,
-      cidade,
-      estado,
-      complemento,
-      cep
-    );
-
     const infos = {
-      order_id,
+      order_id: order.id,
       deliveryman_name,
       deliveryman_email,
       product_name,
@@ -212,8 +197,6 @@ class OrderController {
       complemento,
       cep,
     };
-
-    console.log(infos);
 
     if (
       (recipientChanged === true || productChanged === true) &&
@@ -231,7 +214,44 @@ class OrderController {
     return res.json({ id, product_name, recipient_name, deliveryman_name });
   }
 
-  async delete(req, res) {}
+  async delete(req, res) {
+    const order = await Order.findByPk(req.params.id);
+
+    if (!order) {
+      return res.status(400).json({ erro: 'Order does not exist.' });
+    }
+
+    if (order.start_date != null) {
+      return res.status(400).json({ erro: 'Order already started.' });
+    }
+
+    order.canceled_at = new Date();
+
+    await order.save();
+
+    const deliveryman = await Deliveryman.findByPk(order.deliveryman_id);
+    const recipient = await Recipient.findByPk(order.recipient_id);
+
+    const infos = {
+      order_id: order.id,
+      deliveryman_name: deliveryman.name,
+      deliveryman_email: deliveryman.email,
+      product_name: order.product,
+      recipient_name: recipient.name,
+      logradouro: recipient.logradouro,
+      numero: recipient.numero,
+      cidade: recipient.cidade,
+      estado: recipient.estado,
+      complemento: recipient.complemento,
+      cep: recipient.cep,
+    };
+
+    await Queue.add(CancellationMail.key, {
+      infos,
+    });
+
+    return res.json(order);
+  }
 }
 
 export default new OrderController();

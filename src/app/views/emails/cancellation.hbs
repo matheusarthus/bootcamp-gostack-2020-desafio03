@@ -1,10 +1,11 @@
 <strong>Olá, {{ deliveryman }}</strong>
-<p>O envio de uma encomenda sua foi cancelada.</p>
+<p>Você teve uma encomenda cancelada.</p>
 <p>
+  <strong>ID da encomenda: </strong> {{ id_product }} <br />
   <strong>Nome do produto: </strong> {{ product }} <br />
-  <strong>Destinatário: </strong> {{ date }} <br />
+  <strong>Destinatário: </strong> {{ recipient }} <br />
   <br />
   <small>
-    Devolver
+    Por favor, não retirar a mesma no depósito.
   </small>
 </p>

@@ -13,6 +13,7 @@ class SolicitationMail {
       subject: 'Nova encomenda disponível para retirada',
       template: 'solicitation',
       context: {
+        id_product: infos.order_id,
         deliveryman: infos.deliveryman_name,
         product: infos.product_name,
         recipient: infos.recipient_name,

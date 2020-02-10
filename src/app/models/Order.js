@@ -5,6 +5,7 @@ class Order extends Model {
     super.init(
       {
         product: Sequelize.INTEGER,
+        canceled_at: Sequelize.DATE,
       },
       {
         sequelize,

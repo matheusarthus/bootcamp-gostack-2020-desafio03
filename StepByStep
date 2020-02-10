@@ -442,3 +442,9 @@ yarn add bee-queue
 --Criar 'OrderController.js'
   ->Configurar controller com métodos listagem/cadastro/atualização/remoção;
     ->Adicionar novas rotas com o controller;
+
+--Funcionalidades dos Entregadores
+
+--Criar novo controller 'DeliverymanFunctionsController.js'
+  ->Configurar controller com as funções index/update/post
+    ->Criar rotas
