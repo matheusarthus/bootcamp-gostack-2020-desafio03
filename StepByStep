@@ -445,6 +445,29 @@ yarn add bee-queue
 
 --Funcionalidades dos Entregadores
 
+--Criar nova tabela no banco "delivery_problems"
+--para o report dos problemas nas entregas
+
+yarn sequelize migration:create --name=create-delivery_problems
+  ->Configurar migration
+    ->Criar model referente
+
+--Instalar módulo de manipuilação de database
+
+yarn add date-fns@next
+
 --Criar novo controller 'DeliverymanFunctionsController.js'
-  ->Configurar controller com as funções index/update/post
+  ->Configurar controller com as funções index/update/store
+    ->Criar rotas
+
+--Criar novo controller 'OrderFunctionsController.js'
+  ->Configurar controller com as funções index/update
+    ->Criar rotas
+
+--Criar novo controller 'OrderProblemsController.js'
+  ->Configurar controller com as funções index/delete
+    ->Criar rotas
+
+--Criar novo controller 'ProblemsController.js'
+  ->Configurar controller com as funções index
     ->Criar rotas
