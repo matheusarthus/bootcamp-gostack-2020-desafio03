@@ -471,3 +471,22 @@ yarn add date-fns@next
 --Criar novo controller 'ProblemsController.js'
   ->Configurar controller com as funções index
     ->Criar rotas
+
+--Configurando o tratamento de exceções
+
+--Instalar a extenção 'sentry.import'
+
+yarn add @sentry/node@5.12.2
+
+--Instalar extensão 'express-async-errors'
+
+yarn add express-async-errors
+
+-Instalar extenção 'Youch'
+
+yarn add youch
+
+--Criar arquivo 'sentry.js' na pasta 'config'
+
+--Configurar arquivo 'app.js'
+  ->Criar método 'exceptionHandler()'
